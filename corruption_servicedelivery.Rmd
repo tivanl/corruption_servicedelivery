@@ -199,6 +199,9 @@ Also note the information that I have placed above the chunks in the code chunks
 
 You can also very easily split a page using built-in Pandoc formatting. I comment this out in the code (as this has caused issues building the pdf for some users - which I presume to be a Pandoc issue), but you are welcome to try it out yourself by commenting out the following section in your Rmd file.
 
+```{r}
+
+```
 
 <!-- :::::: {.columns data-latex="[T]"} -->
 <!-- ::: {.column data-latex="{0.7\textwidth}"} -->

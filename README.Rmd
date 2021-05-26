@@ -1,0 +1,44 @@
+---
+title: "README"
+author: "Tivan Leak"
+date: "5/26/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+```
+
+# Purpose
+
+This is the readme for my advanced development research. It documents my thinking throughout the process of research. 
+
+## Data
+
+The data I have is data that I compiled from Auditor Genereal Reports to use as a proxy for corruption. I will load the data here and breifly describe it.
+```{r}
+
+gdp_provinces <- read_csv("data/GDP_Provinces.csv") %>% select(Region, Date, Value)
+view(gdp_provinces)
+```
+
+The frequency of the data is quaterly but the data I have on corruption is annual. Below I anualise the provincial GDP data.
+```{r}
+clean_gdp <- gdp_provinces %>% filter(Region != 'Total: South Africa') %>%
+    mutate(quater = ifelse(grepl("Q1", Date), 1, 
+                           ifelse(grepl("Q2", Date), 2, 
+                                  ifelse(grepl("Q3", Date), 3, 4)))) %>%  
+    mutate(Date = as.numeric(substr(Date, start = 1, stop = 4))) %>% group_by(Date, Region) %>%
+    summarise(Value = sum(Value)) %>% ungroup() %>% mutate(Value = (Value/1000))
+
+clean_gdp %>%  
+    ggplot() +
+    geom_line(aes(x = Date, y = Value, color = Region), alpha = 0.8, size = 1) +
+    facet_wrap(~Region, scales = "free_y") +
+    theme_fivethirtyeight() +
+    labs(title = "Anual provincial GDP", subtitle = "Anual real provincial GDP in constant 2010 prices", caption = "Author's own calculations based on Quantec data", y = "R billion (constant 2010 prices)", x = "") +
+    guides(color = F)
+```
+
